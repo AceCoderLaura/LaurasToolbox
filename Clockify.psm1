@@ -1,9 +1,11 @@
 # BC for < PS v3
 if(!$PSScriptRoot) { $PSScriptRoot = Split-Path -parent $MyInvocation.MyCommand.Path; }
-Set-Location $PSScriptRoot;
+pushd $PSScriptRoot;
 
 # Get the Clockify API key
 $apiKey = Get-Content -Raw -Path "Clockify.key";
+
+popd
 
 function Stop-Clock
 {
