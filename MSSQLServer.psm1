@@ -1,7 +1,7 @@
 # BC for < PS v3
 if(!$PSScriptRoot) { $PSScriptRoot = Split-Path -parent $MyInvocation.MyCommand.Path; }
 
-$backupDirectory = "C:\Temp\DBBackups\";
+$backupDirectory = "C:\Temp\DBBackups\"; # TODO: How should this be configured?
 
 function Export-Database
 {
@@ -37,11 +37,14 @@ function Import-Database
     $logicalFileName = $parsedLogicalNames[0];
     $logicalLogName = $parsedLogicalNames[1];
 
+    $newLogicalFileName = Join-Path $backupDirectory "RAWFILES\$TargetDatabase.ldf";
+    $newLogicalLogName = Join-Path $backupDirectory "RAWFILES\$TargetDatabase.mdf";
+
     $restoreSql = "ALTER DATABASE [$TargetDatabase] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 	RESTORE DATABASE [$TargetDatabase] FROM DISK='$BackupPath' WITH
 		REPLACE,
-		MOVE '$logicalFileName' TO 'C:\Temp\DBBackups\RAWFILES\$TargetDatabase.ldf',
-		MOVE '$logicalLogName' TO 'C:\Temp\DBBackups\RAWFILES\$TargetDatabase.mdf';
+		MOVE '$logicalFileName' TO '$newLogicalFileName',
+		MOVE '$logicalLogName' TO '$newLogicalLogName';
 	ALTER DATABASE [$TargetDatabase] SET MULTI_USER;
 	GO"
 
